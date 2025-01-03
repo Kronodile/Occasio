@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Add CORS import
+const cors = require('cors');
 const eventRoutes = require('./routes/eventRoutes');
 require('dotenv').config();
 
@@ -9,37 +9,36 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
-app.use('/api/events', eventRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
+app.use(express.json());
+
+// Health check route
+app.get('/', (req, res) => {
+    res.send('Server is running');
 });
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, { 
-    useNewUrlParser: true, 
-    useUnifiedTopology: true 
-})
+app.use('/api/events', eventRoutes);
+
+// MongoDB connection with better error handling
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         console.log('MongoDB Atlas connected');
-        app.listen(PORT, () => {
+        // Start server only after successful DB connection
+        const server = app.listen(PORT, '0.0.0.0', () => {
             console.log(`Server is running on port ${PORT}`);
+        });
+        
+        // Handle server errors
+        server.on('error', (error) => {
+            console.error('Server error:', error);
+            process.exit(1);
         });
     })
     .catch(err => {
         console.error('MongoDB connection error:', err);
+        process.exit(1);
     });
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-    console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-    console.log(err.name, err.message);
-    process.exit(1);
-});
