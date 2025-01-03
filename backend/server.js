@@ -8,18 +8,23 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-// Update the cors configuration
-app.use(cors({
+const corsOptions = {
     origin: [
         'https://occasio-10thtig8z-kronodiles-projects.vercel.app',
+        'https://occasio-c51z.onrender.com',
         'http://localhost:5173'
     ],
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Content-Type', 'Authorization']
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 // Health check route
 app.get('/', (req, res) => {
@@ -47,3 +52,5 @@ mongoose.connect(process.env.MONGODB_URI)
         console.error('MongoDB connection error:', err);
         process.exit(1);
     });
+
+module.exports = app;
