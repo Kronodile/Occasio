@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 
 // CORS Configuration
 app.use(cors({
-    origin: 'https://occasio-10thtig8z-kronodiles-projects.vercel.app',
+    origin: 'https://occasio-git-main-kronodiles-projects.vercel.app',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
