@@ -21,7 +21,9 @@ function App() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [editingParticipant, setEditingParticipant] = useState(null);
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = process.env.NODE_ENV === 'production'
+  ? 'https://occasio-c51z.onrender.com/api'
+  : 'http://localhost:5000/api';
 
   useEffect(() => {
     fetchEvents();
