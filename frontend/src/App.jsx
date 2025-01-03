@@ -21,9 +21,7 @@ function App() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [editingParticipant, setEditingParticipant] = useState(null);
 
-  const API_URL = process.env.NODE_ENV === 'production'
-  ? 'https://occasio-c51z.onrender.com/api'
-  : 'http://localhost:5000/api';
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     fetchEvents();
